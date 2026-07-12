@@ -1,116 +1,102 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: #F9F9F6;
-    --foreground: #1c1c1c;
-    
-    --card: #ffffff;
-    --card-foreground: #1c1c1c;
-    
-    --popover: #ffffff;
-    --popover-foreground: #1c1c1c;
-    
-    --primary: #169655;
-    --primary-foreground: #ffffff;
-    
-    --secondary: #f1f5f9;
-    --secondary-foreground: #0f172a;
-    
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
-    
-    --accent: #169655;
-    --accent-foreground: #ffffff;
-    
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    
-    --border: #e5e7eb;
-    --input: #e5e7eb;
-    --ring: #169655;
-  }
+:root {
+  /* EcoSphere Design Tokens */
+  --bg: #F7F5EF;
+  --surface: #FFFFFF;
+  --text-primary: #14140F;
+  --text-muted: #8C8B84;
+  --env: #189A57;
+  --env-light: #E6F4EE;
+  --social: #E8823D;
+  --social-light: #FDF0E8;
+  --gov: #22344E;
+  --gov-light: #E8EDF4;
+  --gamif: #7C4DFF;
+  --gamif-light: #EDE8FF;
+  --action: #14140F;
+  --border: #E8E6DF;
+  --border-strong: #C8C6BF;
+  --shadow-card: 0 1px 3px 0 rgba(20, 20, 15, 0.06), 0 1px 2px -1px rgba(20, 20, 15, 0.04);
+  --shadow-modal: 0 20px 60px -10px rgba(20, 20, 15, 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-env: var(--env);
+  --color-env-light: var(--env-light);
+  --color-social: var(--social);
+  --color-social-light: var(--social-light);
+  --color-gov: var(--gov);
+  --color-gov-light: var(--gov-light);
+  --color-gamif: var(--gamif);
+  --color-gamif-light: var(--gamif-light);
+  --color-action: var(--action);
   --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+* {
+  box-sizing: border-box;
 }
 
-/* Custom Scrollbar */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: var(--border-strong);
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--text-muted);
 }
 
-/* Base Body Style Override */
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  overflow-x: hidden;
+/* Utility — card shadow */
+.card-shadow {
+  box-shadow: var(--shadow-card);
 }
 
-/* Clean White Card replacing Glassmorphism */
-.glass-panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+.modal-shadow {
+  box-shadow: var(--shadow-modal);
 }
 
-.glass-panel-hover:hover {
-  background: var(--card);
-  border-color: rgba(22, 150, 85, 0.3);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-  transform: translateY(-2px);
+/* Smooth transitions globally */
+*,
+*::before,
+*::after {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 120ms;
 }
 
-.glow-emerald {
-  box-shadow: 0 0 40px -10px rgba(22, 150, 85, 0.15);
-}
-
-.glow-blue {
-  box-shadow: 0 0 40px -10px rgba(59, 130, 246, 0.15);
-}
-
-.transition-all-custom {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+/* Remove default transition from certain elements */
+input,
+textarea,
+select {
+  transition: none;
 }
