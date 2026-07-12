@@ -1,9 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-<<<<<<< HEAD
-=======
-  engineType = "library"
->>>>>>> 4bf5ad4c05359693341430897183e765410961b1
 }
 
 datasource db {
@@ -11,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 model User {
   id         String   @id @default(uuid())
@@ -29,7 +26,6 @@ enum Provider {
   google
   github
 }
-=======
 model Department {
   id        String   @id @default(cuid())
   name      String
@@ -61,6 +57,7 @@ model User {
   trainingCompletions TrainingCompletion[]
   badges            EmployeeBadge[]
   redemptions       Redemption[]
+    provider  Provider
 }
 
 model CsrActivity {
@@ -165,4 +162,6 @@ model Redemption {
   rewardId      String
   reward        Reward   @relation(fields: [rewardId], references: [id])
 }
->>>>>>> 4bf5ad4c05359693341430897183e765410961b1
+enum Provider {
+  Google
+}

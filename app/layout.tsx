@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import Provider from "@/components/providers/providers";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -26,9 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full antialiased`}>
-      <body className="min-h-full font-sans bg-bg text-text-primary">
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Provider>
+
+            {children}
+          </Provider>
+        </ThemeProvider>
       </body>
     </html>
   );
