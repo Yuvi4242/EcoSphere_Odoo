@@ -63,7 +63,7 @@ export async function createCsrActivity(data: { title: string; category: string;
     }
   });
 
-  revalidatePath('/social', 'layout');
+  revalidatePath('/', 'layout');
 }
 
 // Join a CSR Activity (Employee)
@@ -101,7 +101,7 @@ export async function joinCsrActivity(activityId: string, proofUrl?: string, not
     }
   });
 
-  revalidatePath('/social', 'layout');
+  revalidatePath('/', 'layout');
 }
 
 // Approve or Reject Participation (Admin only)
@@ -175,7 +175,7 @@ export async function reviewParticipation(participationId: string, approved: boo
     }
   });
 
-  revalidatePath('/social', 'layout');
+  revalidatePath('/', 'layout');
 }
 
 // Seed basic Badges for the Gamification engine
@@ -259,15 +259,15 @@ export async function getTrainingMatrix() {
 
   const deptUserCounts: Record<string, number> = {};
   for (const dept of departments) {
-    deptUserCounts[dept.id] = users.filter(u => u.departmentId === dept.id).length || 1; // avoid division by zero
+    deptUserCounts[dept.id] = users.filter((u: any) => u.departmentId === dept.id).length || 1; // avoid division by zero
   }
 
-  const matrix = trainings.map(t => {
+  const matrix = trainings.map((t: any) => {
     const deptProgress: Record<string, number> = {};
     
     for (const dept of departments) {
       // count how many completions in this training were by users in this dept
-      const completionsInDept = t.completions.filter(c => c.user.departmentId === dept.id).length;
+      const completionsInDept = t.completions.filter((c: any) => c.user.departmentId === dept.id).length;
       const totalUsersInDept = deptUserCounts[dept.id];
       deptProgress[dept.name] = Math.round((completionsInDept / totalUsersInDept) * 100);
     }
@@ -280,5 +280,5 @@ export async function getTrainingMatrix() {
     };
   });
 
-  return { matrix, departmentNames: departments.map(d => d.name) };
+  return { matrix, departmentNames: departments.map((d: any) => d.name) };
 }
