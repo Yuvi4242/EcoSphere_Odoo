@@ -1,9 +1,23 @@
 import StatCard from '@/app/_components/ui/StatCard';
 import PageHeader from '@/app/_components/ui/PageHeader';
 import Badge from '@/app/_components/ui/Badge';
-import { csrActivities } from '@/app/_lib/mock-data';
+import { getSocialStats, getPendingParticipations, getCsrActivities, createCsrActivity } from '@/app/_actions/social';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApprovalQueueClient from './ApprovalQueueClient';
+import JoinActivityForm from './csr-activities/JoinActivityForm';
 
-export default function SocialPage() {
+export default async function SocialPage() {
+  const session = await getServerSession(authOptions);
+  const isAdmin = (session?.user as any)?.role === 'ADMIN';
+  const userId = (session?.user as any)?.id;
+
+  const [stats, activities, pending] = await Promise.all([
+    getSocialStats(),
+    getCsrActivities(),
+    getPendingParticipations(),
+  ]);
+
   return (
     <div>
       <PageHeader
@@ -13,47 +27,79 @@ export default function SocialPage() {
         accentColor="social"
       />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="CSR Activities" value={22} delta="+4 this quarter" deltaPositive dot="social" />
-        <StatCard label="Volunteers Engaged" value={189} delta="+24 this month" deltaPositive dot="social" />
-        <StatCard label="Training Completion" value="78%" delta="+5% vs target" deltaPositive dot="social" />
-        <StatCard label="Diversity Score" value={81} unit="/ 100" dot="social" />
+        <StatCard label="CSR Activities" value={stats.activityCount} dot="social" />
+        <StatCard label="Volunteers Engaged" value={stats.volunteersCount} dot="social" />
+        <StatCard label="Training Completion" value={`${stats.trainingCompletionRate}%`} dot="social" />
+        <StatCard label="Pending Approvals" value={pending.length} dot="social" />
       </div>
 
-      <div className="bg-surface rounded-2xl border border-border card-shadow p-6">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-mono uppercase tracking-widest text-text-muted">CSR Activities</p>
-          <button className="px-4 py-1.5 rounded-full bg-social text-white text-xs font-semibold hover:bg-[#cc7133] transition-colors">
-            + New Activity
-          </button>
-        </div>
-        <div className="flex flex-col gap-2">
-          {csrActivities.map(a => (
-            <div key={a.id} className="flex items-center gap-4 py-3 border-b border-border last:border-0">
-              <div>
-                <p className="text-[10px] font-mono text-social mb-0.5">{a.id}</p>
-                <p className="text-sm font-medium text-text-primary">{a.name}</p>
-                <p className="text-xs text-text-muted font-mono">{a.category} · {a.date}</p>
-              </div>
-              <div className="ml-auto flex items-center gap-4">
-                <span className="text-xs text-text-muted">{a.participants} participants</span>
-                <Badge
-                  variant={
-                    a.status === 'Completed' ? 'completed'
-                    : a.status === 'Upcoming' ? 'upcoming'
-                    : 'pending'
-                  }
-                  label={a.status}
-                />
-                {a.status === 'Pending Approval' && (
-                  <div className="flex gap-2">
-                    <button className="px-3 py-1 rounded-full text-xs font-semibold bg-env text-white hover:bg-[#147a45] transition-colors">Approve</button>
-                    <button className="px-3 py-1 rounded-full text-xs font-semibold bg-border text-text-muted hover:bg-border-strong transition-colors">Reject</button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Active CSR Activities */}
+        <div className="bg-surface rounded-2xl border border-border card-shadow p-6 flex flex-col max-h-[600px]">
+          <div className="flex items-center justify-between mb-4 flex-shrink-0">
+            <p className="text-xs font-mono uppercase tracking-widest text-text-muted">CSR Activities</p>
+            {isAdmin && (
+              <form action={async () => {
+                'use server';
+                await createCsrActivity({
+                  title: 'Community Tree Planting Drive',
+                  category: 'Environmental',
+                  activityDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
+                });
+              }}>
+                <button type="submit" className="px-4 py-1.5 rounded-full bg-social text-white text-xs font-semibold hover:bg-[#cc7133] transition-colors">
+                  + Generate Demo Activity
+                </button>
+              </form>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 overflow-y-auto pr-2">
+            {activities.length === 0 ? (
+              <p className="text-sm text-text-muted py-4">No activities found.</p>
+            ) : (
+              activities.map((a: any) => {
+                const hasJoined = a.participations.some((p: any) => p.userId === userId);
+                return (
+                  <div key={a.id} className="flex items-center gap-4 py-3 border-b border-border last:border-0">
+                    <div>
+                      <p className="text-[10px] font-mono text-social mb-0.5">{a.code}</p>
+                      <p className="text-sm font-medium text-text-primary">{a.title}</p>
+                      <p className="text-xs text-text-muted font-mono">{a.category} · {a.activityDate.toLocaleDateString()}</p>
+                    </div>
+                    <div className="ml-auto flex flex-col items-end gap-2">
+                      <Badge
+                        variant={
+                          a.status === 'COMPLETED' ? 'completed'
+                          : a.status === 'UPCOMING' ? 'upcoming'
+                          : 'pending'
+                        }
+                        label={a.status}
+                      />
+                      {!isAdmin && !hasJoined && a.status === 'UPCOMING' && (
+                        <JoinActivityForm activityId={a.id} />
+                      )}
+                      {!isAdmin && hasJoined && (
+                         <span className="text-[10px] font-mono text-env">✓ JOINED</span>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+                );
+              })
+            )}
+          </div>
         </div>
+
+        {/* Approval Queue (Admin only) */}
+        {isAdmin && (
+          <div className="bg-surface rounded-2xl border border-border card-shadow p-6 flex flex-col max-h-[600px]">
+            <div className="mb-4 flex-shrink-0">
+              <p className="text-xs font-mono uppercase tracking-widest text-text-muted">Approval Queue</p>
+            </div>
+            <div className="overflow-y-auto pr-2">
+              <ApprovalQueueClient pending={pending} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

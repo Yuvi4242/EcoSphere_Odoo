@@ -1,5 +1,9 @@
 generator client {
   provider = "prisma-client-js"
+<<<<<<< HEAD
+=======
+  engineType = "library"
+>>>>>>> 4bf5ad4c05359693341430897183e765410961b1
 }
 
 datasource db {
@@ -7,6 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model User {
   id         String   @id @default(uuid())
   name       String
@@ -24,3 +29,140 @@ enum Provider {
   google
   github
 }
+=======
+model Department {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  head      String?
+  employees Int      @default(0)
+  status    String   @default("Active")
+  
+  users     User[]
+  trainings Training[]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  avatarUrl     String?
+  role          String    @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN"
+  xpTotal       Int       @default(0)
+  pointsBalance Int       @default(0)
+
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+
+  createdActivities CsrActivity[] @relation("CreatedActivities")
+  participations    Participation[] @relation("UserParticipations")
+  reviewedParticipations Participation[] @relation("ReviewedParticipations")
+  trainingCompletions TrainingCompletion[]
+  badges            EmployeeBadge[]
+  redemptions       Redemption[]
+}
+
+model CsrActivity {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  title         String
+  description   String?
+  category      String
+  status        String   @default("UPCOMING") // "UPCOMING" | "ACTIVE" | "COMPLETED" | "UNDER_REVIEW"
+  activityDate  DateTime
+  createdAt     DateTime @default(now())
+
+  createdById   String
+  createdBy     User     @relation("CreatedActivities", fields: [createdById], references: [id])
+
+  participations Participation[]
+}
+
+model Participation {
+  id            String   @id @default(cuid())
+  proofUrl      String?
+  status        String   @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED"
+  pointsEarned  Int      @default(0)
+  submittedAt   DateTime @default(now())
+  reviewedAt    DateTime?
+  reviewComment String?
+
+  activityId    String
+  activity      CsrActivity @relation(fields: [activityId], references: [id])
+
+  userId        String
+  user          User     @relation("UserParticipations", fields: [userId], references: [id])
+
+  reviewedById  String?
+  reviewedBy    User?    @relation("ReviewedParticipations", fields: [reviewedById], references: [id])
+}
+
+model Training {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  dueDate       DateTime?
+
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+
+  completions   TrainingCompletion[]
+}
+
+model TrainingCompletion {
+  id            String   @id @default(cuid())
+  completedAt   DateTime @default(now())
+
+  trainingId    String
+  training      Training @relation(fields: [trainingId], references: [id])
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Badge {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  icon          String?
+  unlockType    String   // "XP_THRESHOLD" | "ACTIVITY_COUNT" | "TRAINING_COUNT"
+  unlockValue   Int
+
+  employeeBadges EmployeeBadge[]
+}
+
+model EmployeeBadge {
+  id            String   @id @default(cuid())
+  earnedAt      DateTime @default(now())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  badgeId       String
+  badge         Badge    @relation(fields: [badgeId], references: [id])
+}
+
+model Reward {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  pointsRequired Int
+  stock         Int      @default(0)
+  status        String   @default("ACTIVE") // "ACTIVE" | "INACTIVE"
+
+  redemptions   Redemption[]
+}
+
+model Redemption {
+  id            String   @id @default(cuid())
+  pointsSpent   Int
+  redeemedAt    DateTime @default(now())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  rewardId      String
+  reward        Reward   @relation(fields: [rewardId], references: [id])
+}
+>>>>>>> 4bf5ad4c05359693341430897183e765410961b1
