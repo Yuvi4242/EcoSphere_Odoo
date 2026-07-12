@@ -48,6 +48,9 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [shouldReduceMotion]);
 
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+  const linearEase = [0, 0, 1, 1] as const;
+
   const staggerContainer = {
     hidden: { opacity: 0 },
     show: {
@@ -60,12 +63,12 @@ export default function LandingPage() {
 
   const fadeUp = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOut } },
   };
 
   const scaleUp = {
     hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: easeOut } },
   };
 
   const heroStagger = {
@@ -78,7 +81,7 @@ export default function LandingPage() {
 
   const heroFadeSlide = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'linear' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: linearEase } },
   };
   return (
     <div className="min-h-screen bg-bg font-sans overflow-x-hidden">
