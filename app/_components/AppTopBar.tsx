@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell, Search, LogOut, ArrowRightLeft } from 'lucide-react';
+import NotificationBell from '@/app/_components/governance/NotificationBell';
+import { Search, LogOut, ArrowRightLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/app/_lib/utils';
 import { useSession, signOut } from 'next-auth/react';
@@ -78,14 +79,7 @@ export default function AppTopBar() {
       </div>
 
       {/* Notifications */}
-      <button
-        id="notifications-btn"
-        className="relative p-2 rounded-xl hover:bg-bg transition-colors text-text-muted hover:text-text-primary"
-        aria-label="Notifications"
-      >
-        <Bell size={17} />
-        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-social rounded-full" />
-      </button>
+      <NotificationBell />
 
       {/* Custom Dropdown Menu for Avatar */}
       <div className="relative">

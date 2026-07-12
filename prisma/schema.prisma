@@ -17,6 +17,12 @@ model Department {
   
   users     User[]
   trainings Training[]
+
+  // Governance Relations
+  policies               Policy[]
+  complianceRequirements ComplianceRequirement[]
+  audits                 Audit[]
+  riskAssessments        RiskAssessment[]
 }
 
 model User {
@@ -26,7 +32,7 @@ model User {
    image     String
   password      String?
   avatarUrl     String?
-  role          String    @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN"
+  role          String    @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN" | "MANAGER"
   xpTotal       Int       @default(0)
   pointsBalance Int       @default(0)
 
@@ -39,6 +45,18 @@ model User {
   trainingCompletions TrainingCompletion[]
   badges            EmployeeBadge[]
   redemptions       Redemption[]
+
+  // Governance Relations
+  policiesCreated        Policy[]                 @relation("PolicyCreatedBy")
+  policyAcknowledgements PolicyAcknowledgement[]
+  complianceRequirements ComplianceRequirement[] @relation("ComplianceOwner")
+  complianceTasks        ComplianceTask[]         @relation("ComplianceTaskAssignee")
+  auditsAudited          Audit[]                  @relation("AuditAuditor")
+  findingsAssigned       AuditFinding[]           @relation("FindingAssignee")
+  risksOwned             RiskAssessment[]         @relation("RiskOwner")
+  notifications          Notification[]           @relation("UserNotification")
+  activityLogs           ActivityLog[]            @relation("UserActivityLog")
+  reportsCreated         Report[]                 @relation("ReportCreator")
 }
 
 model CsrActivity {
@@ -142,4 +160,166 @@ model Redemption {
 
   rewardId      String
   reward        Reward   @relation(fields: [rewardId], references: [id])
+}
+
+// ==========================================
+// GOVERNANCE MODULE MODELS
+// ==========================================
+
+model PolicyCategory {
+  id       String   @id @default(cuid())
+  name     String   @unique
+  policies Policy[]
+}
+
+model Policy {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  summary      String
+  categoryId   String
+  category     PolicyCategory @relation(fields: [categoryId], references: [id])
+  departmentId String
+  department   Department     @relation(fields: [departmentId], references: [id])
+  status       String         @default("Draft") // "Draft" | "Published" | "Archived"
+  version      String         @default("1.0.0")
+  effectiveDate DateTime
+  expiryDate   DateTime
+  pdfUrl       String?
+  createdById  String
+  createdBy    User           @relation("PolicyCreatedBy", fields: [createdById], references: [id])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  versions         PolicyVersion[]
+  acknowledgements PolicyAcknowledgement[]
+}
+
+model PolicyVersion {
+  id        String   @id @default(cuid())
+  policyId  String
+  policy    Policy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  version   String
+  changeLog String
+  createdAt DateTime @default(now())
+}
+
+model PolicyAcknowledgement {
+  id         String    @id @default(cuid())
+  policyId   String
+  policy     Policy    @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status     String    @default("Pending") // "Accepted" | "Pending" | "Rejected"
+  acceptedAt DateTime?
+}
+
+model ComplianceRequirement {
+  id           String           @id @default(cuid())
+  title        String
+  description  String
+  ownerId      String
+  owner        User             @relation("ComplianceOwner", fields: [ownerId], references: [id])
+  departmentId String
+  department   Department       @relation(fields: [departmentId], references: [id])
+  priority     String           @default("Medium") // "Low" | "Medium" | "High" | "Critical"
+  frequency    String           @default("Monthly") // "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Yearly"
+  status       String           @default("Pending") // "Pending" | "In Progress" | "Completed" | "Overdue"
+  dueDate      DateTime
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  tasks        ComplianceTask[]
+}
+
+model ComplianceTask {
+  id           String                @id @default(cuid())
+  complianceId String
+  compliance   ComplianceRequirement @relation(fields: [complianceId], references: [id], onDelete: Cascade)
+  assignedTo   String
+  assignee     User                  @relation("ComplianceTaskAssignee", fields: [assignedTo], references: [id])
+  completedAt  DateTime?
+  remarks      String?
+  createdAt    DateTime              @default(now())
+}
+
+model Audit {
+  id             String         @id @default(cuid())
+  title          String
+  departmentId   String
+  department     Department     @relation(fields: [departmentId], references: [id])
+  auditorId      String
+  auditor        User           @relation("AuditAuditor", fields: [auditorId], references: [id])
+  auditDate      DateTime
+  status         String         @default("Scheduled") // "Scheduled" | "In Progress" | "Completed" | "Cancelled"
+  riskLevel      String         @default("Medium") // "Low" | "Medium" | "High" | "Critical"
+  overallScore   Float?
+  recommendation String?
+  summary        String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  findings       AuditFinding[]
+}
+
+model AuditFinding {
+  id          String    @id @default(cuid())
+  auditId     String
+  audit       Audit     @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  severity    String    @default("Medium") // "Low" | "Medium" | "High" | "Critical"
+  status      String    @default("Open") // "Open" | "In Progress" | "Resolved"
+  assignedTo  String
+  assignee    User      @relation("FindingAssignee", fields: [assignedTo], references: [id])
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model RiskAssessment {
+  id             String     @id @default(cuid())
+  departmentId   String
+  department     Department @relation(fields: [departmentId], references: [id])
+  title          String
+  description    String
+  riskLevel      String     @default("Medium") // "Low" | "Medium" | "High" | "Critical"
+  mitigationPlan String?
+  ownerId        String
+  owner          User       @relation("RiskOwner", fields: [ownerId], references: [id])
+  impact         String?    @default("Medium") // "Low" | "Medium" | "High"
+  probability    String?    @default("Medium") // "Low" | "Medium" | "High"
+  status         String?    @default("Open") // "Open" | "Mitigated"
+  createdAt      DateTime   @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   @default("system") // "policy" | "compliance" | "audit" | "risk" | "system"
+  isRead    Boolean  @default(false)
+  userId    String
+  user      User     @relation("UserNotification", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserActivityLog", fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  entity    String
+  entityId  String
+  timestamp DateTime @default(now())
+}
+
+model Report {
+  id           String     @id @default(cuid())
+  title        String
+  type         String // "Compliance" | "Audit" | "Risk" | "Policy" | "Executive"
+  format       String // "CSV" | "PDF"
+  status       String     @default("Pending") // "Pending" | "Generated" | "Failed"
+  url          String?
+  departmentId String?
+  createdById  String
+  creator      User       @relation("ReportCreator", fields: [createdById], references: [id])
+  createdAt    DateTime   @default(now())
 }

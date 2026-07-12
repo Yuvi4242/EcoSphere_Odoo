@@ -1,22 +1,28 @@
 import React from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getRiskAssessments } from '@/app/_actions/governance';
+import RisksClient from './RisksClient';
 import { prisma } from '@/app/_lib/prisma';
-import { getAudits } from '@/app/_actions/governance';
-import AuditsClient from './AuditsClient';
 
-export default async function AuditsPage() {
+export default async function RisksPage() {
   const session = await getServerSession(authOptions);
   const userRole = (session?.user as { role?: string })?.role || 'EMPLOYEE';
 
-  // Fetch audits
-  const audits = await getAudits();
+  // Fetch risks
+  const risks = await getRiskAssessments();
   const departments = await prisma.department.findMany();
+  
+  // Get active users for ownership selectors
+  const users = await prisma.user.findMany({
+    select: { id: true, name: true }
+  });
 
   return (
-    <AuditsClient
-      initialAudits={audits}
+    <RisksClient
+      initialRisks={risks}
       departments={departments}
+      users={users}
       userRole={userRole}
     />
   );
