@@ -1,21 +1,21 @@
 import React from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getReports } from '@/app/_actions/governance';
+import ReportsClient from './ReportsClient';
 import { prisma } from '@/app/_lib/prisma';
-import { getAudits } from '@/app/_actions/governance';
-import AuditsClient from './AuditsClient';
 
-export default async function AuditsPage() {
+export default async function ReportsPage() {
   const session = await getServerSession(authOptions);
   const userRole = (session?.user as { role?: string })?.role || 'EMPLOYEE';
 
-  // Fetch audits
-  const audits = await getAudits();
+  // Fetch reports list
+  const reports = await getReports();
   const departments = await prisma.department.findMany();
 
   return (
-    <AuditsClient
-      initialAudits={audits}
+    <ReportsClient
+      initialReports={reports}
       departments={departments}
       userRole={userRole}
     />

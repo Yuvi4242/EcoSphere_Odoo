@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell, Search } from 'lucide-react';
+import NotificationBell from '@/app/_components/governance/NotificationBell';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/app/_lib/utils';
 
@@ -36,14 +37,7 @@ export default function AppTopBar() {
       </div>
 
       {/* Notifications */}
-      <button
-        id="notifications-btn"
-        className="relative p-2 rounded-xl hover:bg-bg transition-colors text-text-muted hover:text-text-primary"
-        aria-label="Notifications"
-      >
-        <Bell size={17} />
-        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-social rounded-full" />
-      </button>
+      <NotificationBell />
 
       {/* Avatar */}
       <button
