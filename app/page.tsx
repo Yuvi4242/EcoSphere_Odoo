@@ -104,7 +104,7 @@ export default function LandingPage() {
           <Link href="#how-it-works" className="text-sm text-text-muted hover:text-text-primary transition-colors">How it Works</Link>
           <Link href="/login" className="text-sm text-text-muted hover:text-text-primary transition-colors">Sign In</Link>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/overview" className="px-5 py-2 rounded-full bg-action text-white text-sm font-semibold hover:bg-[#2a2a25] transition-colors shadow-lg">
+            <Link href="/login" className="px-5 py-2 rounded-full bg-action text-white text-sm font-semibold hover:bg-[#2a2a25] transition-colors shadow-lg">
               Launch Platform
             </Link>
           </motion.div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
               <motion.div
                 whileHover={!shouldReduceMotion ? { scale: 1.02, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' } : {}}
               >
-                <Link href="/overview" className="inline-block px-7 py-3.5 rounded-full bg-action text-white font-semibold text-sm transition-shadow">
+                <Link href="/login" className="inline-block px-7 py-3.5 rounded-full bg-action text-white font-semibold text-sm transition-shadow">
                   Launch Platform
                 </Link>
               </motion.div>
@@ -383,7 +383,7 @@ export default function LandingPage() {
             Join organizations already managing Environmental, Social, and Governance performance in one place.
           </motion.p>
           <motion.div variants={scaleUp} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block">
-            <Link href="/overview" className="inline-flex px-8 py-4 rounded-full bg-env text-white font-bold text-lg hover:bg-[#147a45] transition-colors shadow-[0_0_20px_rgba(24,154,87,0.4)] hover:shadow-[0_0_30px_rgba(24,154,87,0.6)]">
+            <Link href="/login" className="inline-flex px-8 py-4 rounded-full bg-env text-white font-bold text-lg hover:bg-[#147a45] transition-colors shadow-[0_0_20px_rgba(24,154,87,0.4)] hover:shadow-[0_0_30px_rgba(24,154,87,0.6)]">
               Launch Platform →
             </Link>
           </motion.div>
