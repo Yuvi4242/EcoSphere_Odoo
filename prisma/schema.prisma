@@ -39,6 +39,7 @@ model User {
   trainingCompletions TrainingCompletion[]
   badges            EmployeeBadge[]
   redemptions       Redemption[]
+    provider  Provider
 }
 
 model CsrActivity {
@@ -142,4 +143,8 @@ model Redemption {
 
   rewardId      String
   reward        Reward   @relation(fields: [rewardId], references: [id])
+}
+
+enum Provider {
+  Google
 }
