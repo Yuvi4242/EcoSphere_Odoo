@@ -1,11 +1,10 @@
 generator client {
   provider = "prisma-client-js"
-  engineType = "library"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Department {
@@ -40,7 +39,6 @@ model User {
   trainingCompletions TrainingCompletion[]
   badges            EmployeeBadge[]
   redemptions       Redemption[]
-    provider  Provider
 }
 
 model CsrActivity {
@@ -98,7 +96,7 @@ model TrainingCompletion {
   training      Training @relation(fields: [trainingId], references: [id])
 
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation("UserParticipations", fields: [userId], references: [id])
 }
 
 model Badge {
@@ -144,8 +142,4 @@ model Redemption {
 
   rewardId      String
   reward        Reward   @relation(fields: [rewardId], references: [id])
-}
-
-enum Provider {
-  Google
 }

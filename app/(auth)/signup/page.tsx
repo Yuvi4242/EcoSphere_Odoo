@@ -2,23 +2,95 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useToast } from '@/app/_components/ui/Toast';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const { showToast } = useToast();
+
+  const [role, setRole] = useState<'EMPLOYEE' | 'ADMIN'>('EMPLOYEE');
   const [form, setForm] = useState({ name: '', email: '', password: '', org: '' });
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      const userRole = (session.user as any).role;
+      if (userRole === 'ADMIN') {
+        router.replace('/admin/overview');
+      } else {
+        router.replace('/app');
+      }
+    }
+  }, [session, status, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => router.push('/overview'), 1200);
+    setErrorMsg('');
+
+    try {
+      // For demo, NextAuth authorize callback acts as auto-registration.
+      // Signing in with a new email automatically registers the user with their selected role.
+      const res = await signIn('credentials', {
+        email: form.email,
+        password: form.password,
+        role: role,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        setErrorMsg('Failed to create account. Please check details.');
+        showToast('Signup failed.', 'error');
+        setLoading(false);
+      } else {
+        showToast('Successfully registered and logged in!', 'success');
+      }
+    } catch (e: any) {
+      setErrorMsg('Something went wrong. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-surface rounded-2xl border border-border card-shadow p-8">
+    <div className="bg-surface rounded-2xl border border-border card-shadow p-8 font-sans">
       <h2 className="text-2xl font-black text-text-primary mb-1">Create your account</h2>
       <p className="text-sm text-text-muted mb-6">Start your EcoSphere ESG journey today</p>
+
+      {errorMsg && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs font-medium">
+          {errorMsg}
+        </div>
+      )}
+
+      {/* Role Segment Selector */}
+      <div className="flex bg-bg p-1 rounded-xl border border-border mb-6">
+        <button
+          type="button"
+          onClick={() => setRole('EMPLOYEE')}
+          className={`flex-1 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+            role === 'EMPLOYEE'
+              ? 'bg-surface text-text-primary border border-border card-shadow'
+              : 'text-text-muted hover:text-text-primary'
+          }`}
+        >
+          👤 Employee
+        </button>
+        <button
+          type="button"
+          onClick={() => setRole('ADMIN')}
+          className={`flex-1 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+            role === 'ADMIN'
+              ? 'bg-surface text-text-primary border border-border card-shadow'
+              : 'text-text-muted hover:text-text-primary'
+          }`}
+        >
+          👑 Admin Panel
+        </button>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {[
@@ -57,3 +129,4 @@ export default function SignupPage() {
     </div>
   );
 }
+

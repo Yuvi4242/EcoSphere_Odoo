@@ -2,6 +2,7 @@
 
 import type React from "react"
 
+import Link from 'next/link';
 import { useState, useEffect, useRef } from "react"
 import SmartSimpleBrilliant from "../components/landing-page/smart-simple-brilliant"
 import YourWorkInSync from "../components//landing-page/your-work-in-sync"
@@ -13,9 +14,6 @@ import FAQSection from "../components/landing-page/faq-section"
 import PricingSection from "../components/landing-page/pricing-section"
 import CTASection from "../components/landing-page/cta-section"
 import FooterSection from "../components/landing-page/footer-section"
-// import AnchorNav from '@/components/auth/anchor-nav'
-import UserAccountNav from '@/components/auth/userAccountNav'
-import SignInButton from '@/components/auth/SignInButton'
 import { useSession } from 'next-auth/react'
 // Reusable Badge Component
 function Badge({ icon, text }: { icon: React.ReactNode; text: string }) {
@@ -122,19 +120,22 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-                <div className="h-6 sm:h-7 md:h-8 flex justify-start items-start gap-2 sm:gap-3">
-                  <div className="px-2 sm:px-3 md:px-[14px] py-1 sm:py-[6px] bg-white shadow-[0px_1px_2px_rgba(55,50,47,0.12)] overflow-hidden rounded-full flex justify-center items-center">
-                    <div className="hidden md:flex items-center space-x-2">
-
-                      <div className="flex items-center bg-neutral-100 border text-black border-neutral-800 rounded-xl font-medium text-xl space-x-6 ">
-                        {session?.user ? (
-                          <UserAccountNav user={session.user} />
-                        ) : (
-                          <SignInButton text="Sign In" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex justify-start items-center gap-2">
+                  {session?.user ? (
+                    <Link
+                      href={(session.user as any).role === 'ADMIN' ? '/admin/overview' : '/app'}
+                      className="px-3 py-1 bg-white hover:bg-neutral-50 shadow-[0px_1px_2px_rgba(55,50,47,0.12)] border border-[rgba(2,6,23,0.08)] overflow-hidden rounded-full flex justify-center items-center text-xs font-semibold text-text-primary transition-colors cursor-pointer"
+                    >
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="px-3 py-1 bg-white hover:bg-neutral-50 shadow-[0px_1px_2px_rgba(55,50,47,0.12)] border border-[rgba(2,6,23,0.08)] overflow-hidden rounded-full flex justify-center items-center text-xs font-semibold text-text-primary transition-colors cursor-pointer"
+                    >
+                      Sign In
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
