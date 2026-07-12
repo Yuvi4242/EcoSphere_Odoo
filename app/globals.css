@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+<<<<<<< HEAD
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -127,4 +128,105 @@
   html {
     @apply font-sans;
   }
+=======
+:root {
+  /* EcoSphere Design Tokens */
+  --bg: #F7F5EF;
+  --surface: #FFFFFF;
+  --text-primary: #14140F;
+  --text-muted: #8C8B84;
+  --env: #189A57;
+  --env-light: #E6F4EE;
+  --social: #E8823D;
+  --social-light: #FDF0E8;
+  --gov: #22344E;
+  --gov-light: #E8EDF4;
+  --gamif: #7C4DFF;
+  --gamif-light: #EDE8FF;
+  --action: #14140F;
+  --border: #E8E6DF;
+  --border-strong: #C8C6BF;
+  --shadow-card: 0 1px 3px 0 rgba(20, 20, 15, 0.06), 0 1px 2px -1px rgba(20, 20, 15, 0.04);
+  --shadow-modal: 0 20px 60px -10px rgba(20, 20, 15, 0.18);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-env: var(--env);
+  --color-env-light: var(--env-light);
+  --color-social: var(--social);
+  --color-social-light: var(--social-light);
+  --color-gov: var(--gov);
+  --color-gov-light: var(--gov-light);
+  --color-gamif: var(--gamif);
+  --color-gamif-light: var(--gamif-light);
+  --color-action: var(--action);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Utility — card shadow */
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.modal-shadow {
+  box-shadow: var(--shadow-modal);
+}
+
+/* Smooth transitions globally */
+*,
+*::before,
+*::after {
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 120ms;
+}
+
+/* Remove default transition from certain elements */
+input,
+textarea,
+select {
+  transition: none;
+>>>>>>> 4bf5ad4c05359693341430897183e765410961b1
 }
