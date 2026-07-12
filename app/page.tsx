@@ -406,9 +406,24 @@ export default function LandingPage() {
             <p className="text-xs text-text-muted leading-relaxed max-w-xs">End-to-end ESG management platform for modern organizations, turning data into action.</p>
           </div>
           {[
-            { title: 'Product', links: ['Overview', 'Environmental', 'Social', 'Governance', 'Gamification'] },
-            { title: 'Company', links: ['About', 'Careers', 'Blog', 'Press'] },
-            { title: 'Legal', links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'] },
+            { title: 'Product', links: [
+              { label: 'Overview', href: '/overview' },
+              { label: 'Environmental', href: '/environmental' },
+              { label: 'Social', href: '/social' },
+              { label: 'Governance', href: '/governance' },
+              { label: 'Gamification', href: '/gamification' }
+            ] },
+            { title: 'Company', links: [
+              { label: 'About', href: '/about' },
+              { label: 'Careers', href: '/careers' },
+              { label: 'Blog', href: '/blog' },
+              { label: 'Press', href: '/press' }
+            ] },
+            { title: 'Legal', links: [
+              { label: 'Privacy Policy', href: '/privacy' },
+              { label: 'Terms of Service', href: '/terms' },
+              { label: 'Cookie Policy', href: '/cookies' }
+            ] },
           ].map((col, i) => (
             <motion.div
               key={col.title}
@@ -420,7 +435,7 @@ export default function LandingPage() {
               <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-4">{col.title}</p>
               <ul className="flex flex-col gap-3">
                 {col.links.map(link => (
-                  <li key={link}><a href="#" className="text-sm text-text-muted hover:text-text-primary transition-colors">{link}</a></li>
+                  <li key={link.label}><Link href={link.href} className="text-sm text-text-muted hover:text-text-primary transition-colors">{link.label}</Link></li>
                 ))}
               </ul>
             </motion.div>
