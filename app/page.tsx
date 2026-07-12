@@ -78,7 +78,10 @@ export default function LandingPage() {
   const scaleUp = {
     hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
     show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' as const } },
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2203b4a0ce89e9e5a4492309fbdf33c112902215
   };
   const heroStagger = {
     hidden: { opacity: 0 },
