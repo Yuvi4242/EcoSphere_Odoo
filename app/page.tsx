@@ -62,12 +62,12 @@ export default function LandingPage() {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
   };
-
   const scaleUp = {
+    x
     hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
     show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' as const } },
+    
   };
-
   const heroStagger = {
     hidden: { opacity: 0 },
     show: {
