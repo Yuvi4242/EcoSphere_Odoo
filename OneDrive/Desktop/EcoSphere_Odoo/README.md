@@ -1,1 +1,0 @@
-# EcoSphere_Odoo 
