@@ -48,6 +48,9 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, [shouldReduceMotion]);
 
+  const easeOut = [0.22, 1, 0.36, 1] as const;
+  const linearEase = [0, 0, 1, 1] as const;
+
   const staggerContainer = {
     hidden: { opacity: 0 },
     show: {
@@ -60,12 +63,12 @@ export default function LandingPage() {
 
   const fadeUp = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: easeOut } },
   };
 
   const scaleUp = {
     hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: easeOut } },
   };
 
   const heroStagger = {
@@ -78,12 +81,12 @@ export default function LandingPage() {
 
   const heroFadeSlide = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'linear' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: linearEase } },
   };
   return (
     <div className="min-h-screen bg-bg font-sans overflow-x-hidden">
       {/* ── Navbar ── */}
-      <motion.nav 
+      <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -92,8 +95,8 @@ export default function LandingPage() {
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-env flex items-center justify-center">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z"/>
-              <path d="M3 8c0 6.626 5.372 12 12 12"/>
+              <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z" />
+              <path d="M3 8c0 6.626 5.372 12 12 12" />
             </svg>
           </div>
           <span className="font-black text-lg text-text-primary">EcoSphere</span>
@@ -113,7 +116,7 @@ export default function LandingPage() {
       {/* ── Hero ── */}
       <section className="max-w-7xl mx-auto px-8 pt-24 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
+
           <motion.div
             variants={heroStagger}
             initial="hidden"
@@ -134,15 +137,15 @@ export default function LandingPage() {
             <motion.p variants={heroFadeSlide} className="text-xs font-mono uppercase tracking-widest text-env mb-6">
               REAL-TIME ESG, WIRED INTO YOUR ERP
             </motion.p>
-            
+
             <motion.h1 variants={heroFadeSlide} className="text-5xl lg:text-6xl font-black text-text-primary leading-tight mb-6">
               Turn raw operational data into a <span className="text-env">certified ESG score</span>.
             </motion.h1>
-            
+
             <motion.p variants={heroFadeSlide} className="text-lg text-text-muted max-w-xl mb-10 leading-relaxed">
               A unified platform that connects carbon accounting, CSR, governance, and gamification directly to your ERP for automated sustainability reporting.
             </motion.p>
-            
+
             <motion.div variants={heroFadeSlide} className="flex flex-wrap items-center gap-4">
               <motion.div
                 whileHover={!shouldReduceMotion ? { scale: 1.02, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' } : {}}
@@ -158,7 +161,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Dashboard preview card */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.5, ease: 'easeOut' }}
@@ -193,14 +196,14 @@ export default function LandingPage() {
               </div>
             </div>
           </motion.div>
-          
+
         </div>
       </section>
 
       {/* ── Problem Statement ── */}
       <section className="bg-surface border-y border-border py-20 px-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-social/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
@@ -230,7 +233,7 @@ export default function LandingPage() {
 
       {/* ── Four Pillars ── */}
       <section id="pillars" className="py-24 px-8 max-w-6xl mx-auto">
-        <motion.div 
+        <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
@@ -240,8 +243,8 @@ export default function LandingPage() {
           <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">The Four Pillars</motion.p>
           <motion.h2 variants={fadeUp} className="text-4xl font-black text-text-primary">Everything ESG, in one platform</motion.h2>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
@@ -249,8 +252,8 @@ export default function LandingPage() {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {pillars.map((p, i) => (
-            <motion.div 
-              key={p.label} 
+            <motion.div
+              key={p.label}
               variants={fadeUp}
               whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
               className="bg-surface rounded-2xl border border-border card-shadow p-8 transition-all duration-300"
@@ -280,7 +283,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="bg-surface border-y border-border py-24 px-8 relative overflow-hidden">
         <div className="absolute top-1/2 left-0 w-96 h-96 bg-env/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
         <div className="max-w-5xl mx-auto relative z-10">
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-100px" }}
@@ -290,8 +293,8 @@ export default function LandingPage() {
             <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">How It Works</motion.p>
             <motion.h2 variants={fadeUp} className="text-4xl font-black text-text-primary">From raw data to ESG score</motion.h2>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
@@ -307,11 +310,11 @@ export default function LandingPage() {
                   <p className="text-xs font-mono uppercase tracking-widest text-text-primary mt-3 text-center max-w-[90px] leading-tight group-hover:text-env transition-colors">{step}</p>
                 </div>
                 {i < flow.length - 1 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ scaleX: 0 }}
                     whileInView={{ scaleX: 1 }}
                     transition={{ delay: 0.5 + (i * 0.1), duration: 0.5 }}
-                    className="hidden md:block w-8 lg:w-16 h-0.5 bg-border flex-shrink-0 origin-left" 
+                    className="hidden md:block w-8 lg:w-16 h-0.5 bg-border flex-shrink-0 origin-left"
                   />
                 )}
               </motion.div>
@@ -343,11 +346,11 @@ export default function LandingPage() {
                 { rank: '🥈', name: 'Tom R.', dept: 'Manufacturing', xp: '8,923' },
                 { rank: '🥉', name: 'Maria L.', dept: 'HR', xp: '8,102' },
               ].map((p, i) => (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + (i * 0.1) }}
-                  key={p.name} 
+                  key={p.name}
                   className="flex items-center gap-4 py-3 border-b border-border last:border-0 hover:bg-bg/50 transition-colors px-2 rounded-lg"
                 >
                   <span className="text-lg w-8 text-center">{p.rank}</span>
@@ -396,8 +399,8 @@ export default function LandingPage() {
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 rounded-md bg-env flex items-center justify-center">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z"/>
-                  <path d="M3 8c0 6.626 5.372 12 12 12"/>
+                  <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z" />
+                  <path d="M3 8c0 6.626 5.372 12 12 12" />
                 </svg>
               </div>
               <span className="font-black text-text-primary">EcoSphere</span>
@@ -409,7 +412,7 @@ export default function LandingPage() {
             { title: 'Company', links: ['About', 'Careers', 'Blog', 'Press'] },
             { title: 'Legal', links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'] },
           ].map((col, i) => (
-            <motion.div 
+            <motion.div
               key={col.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

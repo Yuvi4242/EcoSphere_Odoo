@@ -17,8 +17,8 @@
   --action: #14140F;
   --border: #E8E6DF;
   --border-strong: #C8C6BF;
-  --shadow-card: 0 1px 3px 0 rgba(20,20,15,0.06), 0 1px 2px -1px rgba(20,20,15,0.04);
-  --shadow-modal: 0 20px 60px -10px rgba(20,20,15,0.18);
+  --shadow-card: 0 1px 3px 0 rgba(20, 20, 15, 0.06), 0 1px 2px -1px rgba(20, 20, 15, 0.04);
+  --shadow-modal: 0 20px 60px -10px rgba(20, 20, 15, 0.18);
 }
 
 @theme inline {
@@ -45,7 +45,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -57,23 +58,45 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
 
 /* Utility — card shadow */
-.card-shadow { box-shadow: var(--shadow-card); }
-.modal-shadow { box-shadow: var(--shadow-modal); }
+.card-shadow {
+  box-shadow: var(--shadow-card);
+}
+
+.modal-shadow {
+  box-shadow: var(--shadow-modal);
+}
 
 /* Smooth transitions globally */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   transition-property: color, background-color, border-color, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 120ms;
 }
 
 /* Remove default transition from certain elements */
-input, textarea, select {
+input,
+textarea,
+select {
   transition: none;
 }
