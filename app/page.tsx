@@ -60,12 +60,12 @@ export default function LandingPage() {
 
   const fadeUp = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
   };
 
   const scaleUp = {
     hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' as const } },
   };
 
   const heroStagger = {
@@ -78,7 +78,7 @@ export default function LandingPage() {
 
   const heroFadeSlide = {
     hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'linear' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'linear' as const } },
   };
   return (
     <div className="min-h-screen bg-bg font-sans overflow-x-hidden">
@@ -86,7 +86,7 @@ export default function LandingPage() {
       <motion.nav 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: 'easeOut' as const }}
         className="flex items-center justify-between px-8 py-5 border-b border-border sticky top-0 bg-bg/80 backdrop-blur-md z-50"
       >
         <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.5, ease: 'easeOut' }}
+            transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.5, ease: 'easeOut' as const }}
             className="bg-surface rounded-2xl border border-border card-shadow overflow-hidden shadow-2xl relative w-full max-w-lg lg:ml-auto"
           >
             <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-bg/50">
