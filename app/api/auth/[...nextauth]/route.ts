@@ -11,31 +11,46 @@ export const authOptions: AuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "text" }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         
+        // Determine selected role, falling back to email check
+        const selectedRole = credentials?.role?.toUpperCase() === 'ADMIN' 
+          ? 'ADMIN' 
+          : credentials?.role?.toUpperCase() === 'EMPLOYEE'
+            ? 'EMPLOYEE'
+            : credentials.email.toLowerCase().includes('admin') ? "ADMIN" : "EMPLOYEE";
+
         // Find user
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
 
         if (!user) {
-          // If no user exists and this is the first login, let's create them (simple auto-signup for demo)
+          // Create new user with selected role
           const newUser = await prisma.user.create({
             data: {
               email: credentials.email,
               name: credentials.email.split('@')[0],
-              password: credentials.password, // In a real app, hash this!
-              role: credentials.email.toLowerCase().includes('admin') ? "ADMIN" : "EMPLOYEE"
+              password: credentials.password,
+              role: selectedRole
             }
           });
           return { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role };
         }
 
-        // Check password
+        // Check password and sync role to selected role for development convenience
         if (user.password === credentials.password) {
+          if (user.role !== selectedRole && credentials.role) {
+            const updatedUser = await prisma.user.update({
+              where: { id: user.id },
+              data: { role: selectedRole }
+            });
+            return { id: updatedUser.id, email: updatedUser.email, name: updatedUser.name, role: updatedUser.role };
+          }
           return { id: user.id, email: user.email, name: user.name, role: user.role };
         }
         
@@ -69,4 +84,5 @@ export const authOptions: AuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

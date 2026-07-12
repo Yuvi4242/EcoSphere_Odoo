@@ -1,440 +1,593 @@
-'use client';
+"use client"
+
+import type React from "react"
 
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
-import { useState, useEffect } from 'react';
-
-const pillars = [
-  {
-    color: '#189A57', bg: '#E6F4EE', label: 'E — Environmental',
-    title: 'Carbon Accounting at Scale',
-    desc: 'Real-time emission tracking connected to your ERP, with factors, goals, and automated reporting.',
-    bullets: ['Emission Factors Library', 'Carbon Transaction Log', 'Department Targets & Goals'],
-  },
-  {
-    color: '#E8823D', bg: '#FDF0E8', label: 'S — Social',
-    title: 'People, Community & Culture',
-    desc: 'Run CSR campaigns, track diversity metrics, and measure training completion across your org.',
-    bullets: ['CSR Activity Management', 'Volunteer Participation', 'Diversity & Inclusion Metrics'],
-  },
-  {
-    color: '#22344E', bg: '#E8EDF4', label: 'G — Governance',
-    title: 'Compliance Without Chaos',
-    desc: 'Central policy registry, audit trails, and compliance issue tracking — all connected.',
-    bullets: ['ESG Policy Registry', 'Audit Log & Findings', 'Compliance Issue Tracker'],
-  },
-  {
-    color: '#7C4DFF', bg: '#EDE8FF', label: 'Gamification',
-    title: 'Engagement That Drives Action',
-    desc: 'Turn sustainability tasks into challenges with XP, badges, leaderboards, and redeemable rewards.',
-    bullets: ['Challenges & XP System', 'Achievement Badges', 'Rewards & Leaderboard'],
-  },
-];
-
-const flow = [
-  'Master Config', 'Daily Operations', 'Carbon Transactions',
-  'E / S / G Scores', 'Overall ESG Score', 'Dashboard',
-];
+import { useState, useEffect, useRef } from "react"
+import SmartSimpleBrilliant from "../components/landing-page/smart-simple-brilliant"
+import YourWorkInSync from "../components//landing-page/your-work-in-sync"
+import EffortlessIntegration from "../components/landing-page/effortless-integration-updated"
+import NumbersThatSpeak from "../components/landing-page/numbers-that-speak"
+import DocumentationSection from "../components/landing-page/documentation-section"
+import TestimonialsSection from "../components/landing-page/testimonials-section"
+import FAQSection from "../components/landing-page/faq-section"
+import PricingSection from "../components/landing-page/pricing-section"
+import CTASection from "../components/landing-page/cta-section"
+import FooterSection from "../components/landing-page/footer-section"
+import { useSession } from 'next-auth/react'
+// Reusable Badge Component
+function Badge({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <div className="px-[14px] py-[6px] bg-white shadow-[0px_0px_0px_4px_rgba(55,50,47,0.05)] overflow-hidden rounded-[90px] flex justify-start items-center gap-[8px] border border-[rgba(2,6,23,0.08)] shadow-xs">
+      <div className="w-[14px] h-[14px] relative overflow-hidden flex items-center justify-center">{icon}</div>
+      <div className="text-center flex justify-center flex-col text-[#37322F] text-xs font-medium leading-3 font-sans">
+        {text}
+      </div>
+    </div>
+  )
+}
 
 export default function LandingPage() {
-  const shouldReduceMotion = useReducedMotion();
-  const [liveScore, setLiveScore] = useState(74);
+  const [activeCard, setActiveCard] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const mountedRef = useRef(true)
+  const { data: session } = useSession()
+  useEffect(() => {
+    const progressInterval = setInterval(() => {
+      if (!mountedRef.current) return
+
+      setProgress((prev) => {
+        if (prev >= 100) {
+          if (mountedRef.current) {
+            setActiveCard((current) => (current + 1) % 3)
+          }
+          return 0
+        }
+        return prev + 2 // 2% every 100ms = 5 seconds total
+      })
+    }, 100)
+
+    return () => {
+      clearInterval(progressInterval)
+      mountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
-    const interval = setInterval(() => {
-      setLiveScore(prev => prev >= 99 ? 74 : prev + 1);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [shouldReduceMotion]);
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
-  const easeOut = [0.22, 1, 0.36, 1] as const;
-  const linearEase = [0, 0, 1, 1] as const;
+  const handleCardClick = (index: number) => {
+    if (!mountedRef.current) return
+    setActiveCard(index)
+    setProgress(0)
+  }
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.15,
-      },
-    },
-  };
+  const getDashboardContent = () => {
+    switch (activeCard) {
+      case 0:
+        return <div className="text-[#828387] text-sm">Customer Subscription Status and Details</div>
+      case 1:
+        return <div className="text-[#828387] text-sm">Analytics Dashboard - Real-time Insights</div>
+      case 2:
+        return <div className="text-[#828387] text-sm">Data Visualization - Charts and Metrics</div>
+      default:
+        return <div className="text-[#828387] text-sm">Customer Subscription Status and Details</div>
+    }
+  }
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
-  };
-  const scaleUp = {
-    hidden: { opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: 'easeOut' as const } },
-  };
-  const heroStagger = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: shouldReduceMotion ? 0 : 0.1 },
-    },
-  };
 
-  const heroFadeSlide = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'linear' as const } },
-  };
   return (
-    <div className="min-h-screen bg-bg font-sans overflow-x-hidden">
-      {/* ── Navbar ── */}
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' as const }}
-        className="flex items-center justify-between px-8 py-5 border-b border-border sticky top-0 bg-bg/80 backdrop-blur-md z-50"
-      >
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-env flex items-center justify-center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z" />
-              <path d="M3 8c0 6.626 5.372 12 12 12" />
-            </svg>
-          </div>
-          <span className="font-black text-lg text-text-primary">EcoSphere</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <Link href="#pillars" className="text-sm text-text-muted hover:text-text-primary transition-colors">Platform</Link>
-          <Link href="#how-it-works" className="text-sm text-text-muted hover:text-text-primary transition-colors">How it Works</Link>
-          <Link href="/login" className="text-sm text-text-muted hover:text-text-primary transition-colors">Sign In</Link>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/overview" className="px-5 py-2 rounded-full bg-action text-white text-sm font-semibold hover:bg-[#2a2a25] transition-colors shadow-lg">
-              Launch Platform
-            </Link>
-          </motion.div>
-        </div>
-      </motion.nav>
+    <div className="w-full min-h-screen relative bg-[#F7F5F3] overflow-x-hidden flex flex-col justify-start items-center">
+      <div className="relative flex flex-col justify-start items-center w-full">
+        {/* Main container with proper margins */}
+        <div className="w-full max-w-none px-4 sm:px-6 md:px-8 lg:px-0 lg:max-w-[1060px] lg:w-[1060px] relative flex flex-col justify-start items-start min-h-screen">
+          {/* Left vertical line */}
+          <div className="w-[1px] h-full absolute left-4 sm:left-6 md:left-8 lg:left-0 top-0 bg-[rgba(55,50,47,0.12)] shadow-[1px_0px_0px_white] z-0"></div>
 
-      {/* ── Hero ── */}
-      <section className="max-w-7xl mx-auto px-8 pt-24 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Right vertical line */}
+          <div className="w-[1px] h-full absolute right-4 sm:right-6 md:right-8 lg:right-0 top-0 bg-[rgba(55,50,47,0.12)] shadow-[1px_0px_0px_white] z-0"></div>
 
-          <motion.div
-            variants={heroStagger}
-            initial="hidden"
-            animate="show"
-            className="flex flex-col items-start text-left"
-          >
-            <motion.div variants={heroFadeSlide} className="flex items-center gap-2 mb-6">
-              {!shouldReduceMotion && (
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-env opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-env"></span>
-                </span>
-              )}
-              {shouldReduceMotion && <span className="h-2 w-2 rounded-full bg-env"></span>}
-              <span className="text-xs font-mono uppercase tracking-widest text-text-muted">Live ERP sync</span>
-            </motion.div>
+          <div className="self-stretch pt-[9px] overflow-hidden border-b border-[rgba(55,50,47,0.06)] flex flex-col justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-[66px] relative z-10">
+            {/* Navigation */}
+            <div className="w-full h-12 sm:h-14 md:h-16 lg:h-[84px] absolute left-0 top-0 flex justify-center items-center z-20 px-6 sm:px-8 md:px-12 lg:px-0">
+              <div className="w-full h-0 absolute left-0 top-6 sm:top-7 md:top-8 lg:top-[42px] border-t border-[rgba(55,50,47,0.12)] shadow-[0px_1px_0px_white]"></div>
 
-            <motion.p variants={heroFadeSlide} className="text-xs font-mono uppercase tracking-widest text-env mb-6">
-              REAL-TIME ESG, WIRED INTO YOUR ERP
-            </motion.p>
-
-            <motion.h1 variants={heroFadeSlide} className="text-5xl lg:text-6xl font-black text-text-primary leading-tight mb-6">
-              Turn raw operational data into a <span className="text-env">certified ESG score</span>.
-            </motion.h1>
-
-            <motion.p variants={heroFadeSlide} className="text-lg text-text-muted max-w-xl mb-10 leading-relaxed">
-              A unified platform that connects carbon accounting, CSR, governance, and gamification directly to your ERP for automated sustainability reporting.
-            </motion.p>
-
-            <motion.div variants={heroFadeSlide} className="flex flex-wrap items-center gap-4">
-              <motion.div
-                whileHover={!shouldReduceMotion ? { scale: 1.02, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' } : {}}
-              >
-                <Link href="/overview" className="inline-block px-7 py-3.5 rounded-full bg-action text-white font-semibold text-sm transition-shadow">
-                  Launch Platform
-                </Link>
-              </motion.div>
-              <Link href="#how-it-works" className="inline-block px-7 py-3.5 rounded-full border border-border text-text-primary font-semibold text-sm hover:bg-[#189A57]/10 transition-colors">
-                See How It Works
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          {/* Dashboard preview card */}
-          <motion.div
-            initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: shouldReduceMotion ? 0 : 0.5, ease: 'easeOut' as const }}
-            className="bg-surface rounded-2xl border border-border card-shadow overflow-hidden shadow-2xl relative w-full max-w-lg lg:ml-auto"
-          >
-            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-bg/50">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-              <span className="ml-2 text-xs font-mono text-text-muted">ecosphere.io / overview</span>
-            </div>
-            <div className="p-6 grid grid-cols-2 gap-4">
-              <div className="bg-bg rounded-xl p-4 border border-border">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-1">ESG Score</p>
-                <p className="text-4xl font-black text-text-primary transition-all duration-300">
-                  {liveScore}
-                </p>
-              </div>
-              <div className="bg-bg rounded-xl p-4 border border-border">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-1">Emissions</p>
-                <p className="text-2xl font-black text-env mt-1">
-                  4,281 <span className="text-sm font-semibold">tCO2e</span>
-                </p>
-              </div>
-              <div className="bg-bg rounded-xl p-4 border border-border">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-1">CSR Activities</p>
-                <p className="text-2xl font-black text-[#E8823D] mt-1">22</p>
-              </div>
-              <div className="bg-bg rounded-xl p-4 border border-border">
-                <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted mb-1">XP Earned</p>
-                <p className="text-2xl font-black text-[#7C4DFF] mt-1">128K</p>
-              </div>
-            </div>
-          </motion.div>
-
-        </div>
-      </section>
-
-      {/* ── Problem Statement ── */}
-      <section className="bg-surface border-y border-border py-20 px-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-social/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="max-w-4xl mx-auto text-center relative z-10"
-        >
-          <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-4">The Problem</motion.p>
-          <motion.h2 variants={fadeUp} className="text-4xl font-black text-text-primary mb-6">ESG shouldn&apos;t live in spreadsheets</motion.h2>
-          <motion.p variants={fadeUp} className="text-lg text-text-muted max-w-2xl mx-auto mb-12">
-            Most organizations track carbon, compliance, and CSR across disconnected tools — manual exports, siloed ERP modules, and ad-hoc spreadsheets. EcoSphere unifies it all.
-          </motion.p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { stat: '74%', label: 'of ESG data collected manually', sub: 'Industry average' },
-              { stat: '6+', label: 'tools used per ESG report', sub: 'Typical enterprise' },
-              { stat: '40h', label: 'per quarter on data reconciliation', sub: 'Sustainability teams' },
-            ].map(s => (
-              <motion.div key={s.stat} variants={scaleUp} className="text-center group">
-                <p className="text-5xl font-black text-text-primary mb-1 group-hover:scale-110 transition-transform duration-300 origin-center">{s.stat}</p>
-                <p className="text-sm text-text-muted">{s.label}</p>
-                <p className="text-xs font-mono text-text-muted/60 mt-1">{s.sub}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ── Four Pillars ── */}
-      <section id="pillars" className="py-24 px-8 max-w-6xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="text-center mb-16"
-        >
-          <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">The Four Pillars</motion.p>
-          <motion.h2 variants={fadeUp} className="text-4xl font-black text-text-primary">Everything ESG, in one platform</motion.h2>
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-        >
-          {pillars.map((p, i) => (
-            <motion.div
-              key={p.label}
-              variants={fadeUp}
-              whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' }}
-              className="bg-surface rounded-2xl border border-border card-shadow p-8 transition-all duration-300"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform hover:scale-110" style={{ background: p.bg }}>
-                  <div className="w-4 h-4 rounded-full" style={{ background: p.color }} />
-                </div>
-                <span className="text-xs font-mono uppercase tracking-widest" style={{ color: p.color }}>{p.label}</span>
-              </div>
-              <h3 className="text-xl font-bold text-text-primary mb-2">{p.title}</h3>
-              <p className="text-sm text-text-muted mb-6 leading-relaxed">{p.desc}</p>
-              <ul className="flex flex-col gap-2">
-                {p.bullets.map(b => (
-                  <li key={b} className="flex items-center gap-3 text-sm text-text-muted">
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: p.color }} />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* ── How It Works ── */}
-      <section id="how-it-works" className="bg-surface border-y border-border py-24 px-8 relative overflow-hidden">
-        <div className="absolute top-1/2 left-0 w-96 h-96 bg-env/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
-        <div className="max-w-5xl mx-auto relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">How It Works</motion.p>
-            <motion.h2 variants={fadeUp} className="text-4xl font-black text-text-primary">From raw data to ESG score</motion.h2>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={staggerContainer}
-            className="flex items-center justify-between flex-wrap gap-2 md:gap-0"
-          >
-            {flow.map((step, i) => (
-              <motion.div key={step} variants={scaleUp} className="flex flex-col md:flex-row items-center gap-2 md:gap-4 w-full md:w-auto mb-6 md:mb-0">
-                <div className="flex flex-col items-center group cursor-default">
-                  <div className="w-12 h-12 rounded-full border-2 border-border bg-surface flex items-center justify-center text-sm font-mono text-text-muted group-hover:border-env group-hover:text-env transition-colors shadow-sm group-hover:shadow-md">
-                    {i + 1}
+              <div className="w-full max-w-[calc(100%-32px)] sm:max-w-[calc(100%-48px)] md:max-w-[calc(100%-64px)] lg:max-w-[700px] lg:w-[700px] h-10 sm:h-11 md:h-12 py-1.5 sm:py-2 px-3 sm:px-4 md:px-4 pr-2 sm:pr-3 bg-[#F7F5F3] backdrop-blur-sm shadow-[0px_0px_0px_2px_white] overflow-hidden rounded-[50px] flex justify-between items-center relative z-30">
+                <div className="flex justify-center items-center">
+                  <div className="flex justify-start items-center">
+                    <div className="flex flex-col justify-center text-[#2F3037] text-sm sm:text-base md:text-lg lg:text-xl font-medium leading-5 font-sans">
+                      Brillance
+                    </div>
                   </div>
-                  <p className="text-xs font-mono uppercase tracking-widest text-text-primary mt-3 text-center max-w-[90px] leading-tight group-hover:text-env transition-colors">{step}</p>
+                  <div className="pl-3 sm:pl-4 md:pl-5 lg:pl-5 flex justify-start items-start hidden sm:flex flex-row gap-2 sm:gap-3 md:gap-4 lg:gap-4">
+                    <div className="flex justify-start items-center">
+                      <div className="flex flex-col justify-center text-[rgba(49,45,43,0.80)] text-xs md:text-[13px] font-medium leading-[14px] font-sans">
+                        Products
+                      </div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      <div className="flex flex-col justify-center text-[rgba(49,45,43,0.80)] text-xs md:text-[13px] font-medium leading-[14px] font-sans">
+                        Pricing
+                      </div>
+                    </div>
+                    <div className="flex justify-start items-center">
+                      <div className="flex flex-col justify-center text-[rgba(49,45,43,0.80)] text-xs md:text-[13px] font-medium leading-[14px] font-sans">
+                        Docs
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {i < flow.length - 1 && (
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    transition={{ delay: 0.5 + (i * 0.1), duration: 0.5 }}
-                    className="hidden md:block w-8 lg:w-16 h-0.5 bg-border flex-shrink-0 origin-left"
+                <div className="flex justify-start items-center gap-2">
+                  {session?.user ? (
+                    <Link
+                      href={(session.user as any).role === 'ADMIN' ? '/admin/overview' : '/app'}
+                      className="px-3 py-1 bg-white hover:bg-neutral-50 shadow-[0px_1px_2px_rgba(55,50,47,0.12)] border border-[rgba(2,6,23,0.08)] overflow-hidden rounded-full flex justify-center items-center text-xs font-semibold text-text-primary transition-colors cursor-pointer"
+                    >
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="px-3 py-1 bg-white hover:bg-neutral-50 shadow-[0px_1px_2px_rgba(55,50,47,0.12)] border border-[rgba(2,6,23,0.08)] overflow-hidden rounded-full flex justify-center items-center text-xs font-semibold text-text-primary transition-colors cursor-pointer"
+                    >
+                      Sign In
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Section */}
+            <div className="pt-16 sm:pt-20 md:pt-24 lg:pt-[216px] pb-8 sm:pb-12 md:pb-16 flex flex-col justify-start items-center px-2 sm:px-4 md:px-8 lg:px-0 w-full sm:pl-0 sm:pr-0 pl-0 pr-0">
+              <div className="w-full max-w-[937px] lg:w-[937px] flex flex-col justify-center items-center gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+                <div className="self-stretch rounded-[3px] flex flex-col justify-center items-center gap-4 sm:gap-5 md:gap-6 lg:gap-8">
+                  <div className="w-full max-w-[748.71px] lg:w-[748.71px] text-center flex justify-center flex-col text-[#37322F] text-[24px] xs:text-[28px] sm:text-[36px] md:text-[52px] lg:text-[80px] font-normal leading-[1.1] sm:leading-[1.15] md:leading-[1.2] lg:leading-24 font-serif px-2 sm:px-4 md:px-0">
+                    Effortless custom contract
+                    <br />
+                    billing by Brillance
+                  </div>
+                  <div className="w-full max-w-[506.08px] lg:w-[506.08px] text-center flex justify-center flex-col text-[rgba(55,50,47,0.80)] sm:text-lg md:text-xl leading-[1.4] sm:leading-[1.45] md:leading-[1.5] lg:leading-7 font-sans px-2 sm:px-4 md:px-0 lg:text-lg font-medium text-sm">
+                    Streamline your billing process with seamless automation
+                    <br className="hidden sm:block" />
+                    for every custom contract, tailored by Brillance.
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full max-w-[497px] lg:w-[497px] flex flex-col justify-center items-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 relative z-10 mt-6 sm:mt-8 md:mt-10 lg:mt-12">
+                <div className="backdrop-blur-[8.25px] flex justify-start items-center gap-4">
+                  <div className="h-10 sm:h-11 md:h-12 px-6 sm:px-8 md:px-10 lg:px-12 py-2 sm:py-[6px] relative bg-[#37322F] shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset] overflow-hidden rounded-full flex justify-center items-center">
+                    <div className="w-20 sm:w-24 md:w-28 lg:w-44 h-[41px] absolute left-0 top-[-0.5px] bg-gradient-to-b from-[rgba(255,255,255,0)] to-[rgba(0,0,0,0.10)] mix-blend-multiply"></div>
+                    <div className="flex flex-col justify-center text-white text-sm sm:text-base md:text-[15px] font-medium leading-5 font-sans">
+                      Start for free
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute top-[232px] sm:top-[248px] md:top-[264px] lg:top-[320px] left-1/2 transform -translate-x-1/2 z-0 pointer-events-none">
+                <img
+                  src="/mask-group-pattern.svg"
+                  alt=""
+                  className="w-[936px] sm:w-[1404px] md:w-[2106px] lg:w-[2808px] h-auto opacity-30 sm:opacity-40 md:opacity-50 mix-blend-multiply"
+                  style={{
+                    filter: "hue-rotate(15deg) saturate(0.7) brightness(1.2)",
+                  }}
+                />
+              </div>
+
+              <div className="w-full max-w-[960px] lg:w-[960px] pt-2 sm:pt-4 pb-6 sm:pb-8 md:pb-10 px-2 sm:px-4 md:px-6 lg:px-11 flex flex-col justify-center items-center gap-2 relative z-5 my-8 sm:my-12 md:my-16 lg:my-16 mb-0 lg:pb-0">
+                <div className="w-full max-w-[960px] lg:w-[960px] h-[200px] sm:h-[280px] md:h-[450px] lg:h-[695.55px] bg-white shadow-[0px_0px_0px_0.9056603908538818px_rgba(0,0,0,0.08)] overflow-hidden rounded-[6px] sm:rounded-[8px] lg:rounded-[9.06px] flex flex-col justify-start items-start">
+                  {/* Dashboard Content */}
+                  <div className="self-stretch flex-1 flex justify-start items-start">
+                    {/* Main Content */}
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="relative w-full h-full overflow-hidden">
+                        {/* Product Image 1 - Plan your schedules */}
+                        <div
+                          className={`absolute inset-0 transition-all duration-500 ease-in-out ${activeCard === 0 ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-95 blur-sm"
+                            }`}
+                        >
+                          <img
+                            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/dsadsadsa.jpg-xTHS4hGwCWp2H5bTj8np6DXZUyrxX7.jpeg"
+                            alt="Schedules Dashboard - Customer Subscription Management"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Product Image 2 - Data to insights */}
+                        <div
+                          className={`absolute inset-0 transition-all duration-500 ease-in-out ${activeCard === 1 ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-95 blur-sm"
+                            }`}
+                        >
+                          <img
+                            src="/analytics-dashboard-with-charts-graphs-and-data-vi.jpg"
+                            alt="Analytics Dashboard"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Product Image 3 - Data visualization */}
+                        <div
+                          className={`absolute inset-0 transition-all duration-500 ease-in-out ${activeCard === 2 ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-95 blur-sm"
+                            }`}
+                        >
+                          <img
+                            src="/data-visualization-dashboard-with-interactive-char.jpg"
+                            alt="Data Visualization Dashboard"
+                            className="w-full h-full object-contain" // Changed from object-cover to object-contain to preserve landscape aspect ratio
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="self-stretch border-t border-[#E0DEDB] border-b border-[#E0DEDB] flex justify-center items-start">
+                <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                  {/* Left decorative pattern */}
+                  <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                    {Array.from({ length: 50 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                      ></div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1 px-0 sm:px-2 md:px-0 flex flex-col md:flex-row justify-center items-stretch gap-0">
+                  {/* Feature Cards */}
+                  <FeatureCard
+                    title="Plan your schedules"
+                    description="Streamline customer subscriptions and billing with automated scheduling tools."
+                    isActive={activeCard === 0}
+                    progress={activeCard === 0 ? progress : 0}
+                    onClick={() => handleCardClick(0)}
                   />
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+                  <FeatureCard
+                    title="Analytics & insights"
+                    description="Transform your business data into actionable insights with real-time analytics."
+                    isActive={activeCard === 1}
+                    progress={activeCard === 1 ? progress : 0}
+                    onClick={() => handleCardClick(1)}
+                  />
+                  <FeatureCard
+                    title="Collaborate seamlessly"
+                    description="Keep your team aligned with shared dashboards and collaborative workflows."
+                    isActive={activeCard === 2}
+                    progress={activeCard === 2 ? progress : 0}
+                    onClick={() => handleCardClick(2)}
+                  />
+                </div>
 
-      {/* ── Dashboard Preview (2nd) ── */}
-      <section className="py-24 px-8 max-w-4xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-        >
-          <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-text-muted mb-6 text-center">See It In Action</motion.p>
-          <motion.div variants={scaleUp} className="bg-surface rounded-2xl border border-border card-shadow overflow-hidden hover:shadow-2xl transition-shadow duration-500">
-            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-bg/50">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-              <span className="ml-2 text-xs font-mono text-text-muted">ecosphere.io / gamification</span>
-            </div>
-            <div className="p-6">
-              <p className="text-xs font-mono uppercase tracking-widest text-gamif mb-4">Gamification · Leaderboard</p>
-              {[
-                { rank: '🥇', name: 'Sarah K.', dept: 'Engineering', xp: '9,847' },
-                { rank: '🥈', name: 'Tom R.', dept: 'Manufacturing', xp: '8,923' },
-                { rank: '🥉', name: 'Maria L.', dept: 'HR', xp: '8,102' },
-              ].map((p, i) => (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 + (i * 0.1) }}
-                  key={p.name}
-                  className="flex items-center gap-4 py-3 border-b border-border last:border-0 hover:bg-bg/50 transition-colors px-2 rounded-lg"
-                >
-                  <span className="text-lg w-8 text-center">{p.rank}</span>
-                  <div className="w-8 h-8 rounded-full bg-gamif-light text-gamif text-xs font-bold flex items-center justify-center">
-                    {p.name.split(' ').map(w => w[0]).join('')}
+                <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                  {/* Right decorative pattern */}
+                  <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                    {Array.from({ length: 50 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                      ></div>
+                    ))}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-text-primary">{p.name}</p>
-                    <p className="text-xs text-text-muted">{p.dept}</p>
-                  </div>
-                  <span className="text-sm font-black text-gamif">{p.xp} XP</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="bg-text-primary py-24 px-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-env/20 via-text-primary to-text-primary opacity-60" />
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-          className="relative z-10"
-        >
-          <motion.p variants={fadeUp} className="text-xs font-mono uppercase tracking-widest text-surface/40 mb-4">Get Started</motion.p>
-          <motion.h2 variants={fadeUp} className="text-4xl md:text-5xl font-black text-surface mb-6">Ready to unify your ESG data?</motion.h2>
-          <motion.p variants={fadeUp} className="text-surface/70 mb-10 max-w-lg mx-auto text-lg">
-            Join organizations already managing Environmental, Social, and Governance performance in one place.
-          </motion.p>
-          <motion.div variants={scaleUp} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block">
-            <Link href="/overview" className="inline-flex px-8 py-4 rounded-full bg-env text-white font-bold text-lg hover:bg-[#147a45] transition-colors shadow-[0_0_20px_rgba(24,154,87,0.4)] hover:shadow-[0_0_30px_rgba(24,154,87,0.6)]">
-              Launch Platform →
-            </Link>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── Footer ── */}
-      <footer className="bg-bg border-t border-border px-8 py-12">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-md bg-env flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 8C8 10 5.9 16.17 3.82 19.1a10.49 10.49 0 0 0 10.39 1.7c2.64-.9 4.48-3.26 5.04-6.14A11.1 11.1 0 0 0 17 8Z" />
-                  <path d="M3 8c0 6.626 5.372 12 12 12" />
-                </svg>
+                </div>
               </div>
-              <span className="font-black text-text-primary">EcoSphere</span>
+
+              {/* Social Proof Section */}
+              <div className="w-full border-b border-[rgba(55,50,47,0.12)] flex flex-col justify-center items-center">
+                <div className="self-stretch px-4 sm:px-6 md:px-24 py-8 sm:py-12 md:py-16 border-b border-[rgba(55,50,47,0.12)] flex justify-center items-center gap-6">
+                  <div className="w-full max-w-[586px] px-4 sm:px-6 py-4 sm:py-5 shadow-[0px_2px_4px_rgba(50,45,43,0.06)] overflow-hidden rounded-lg flex flex-col justify-start items-center gap-3 sm:gap-4 shadow-none">
+                    <Badge
+                      icon={
+                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="1" y="3" width="4" height="6" stroke="#37322F" strokeWidth="1" fill="none" />
+                          <rect x="7" y="1" width="4" height="8" stroke="#37322F" strokeWidth="1" fill="none" />
+                          <rect x="2" y="4" width="1" height="1" fill="#37322F" />
+                          <rect x="3.5" y="4" width="1" height="1" fill="#37322F" />
+                          <rect x="2" y="5.5" width="1" height="1" fill="#37322F" />
+                          <rect x="3.5" y="5.5" width="1" height="1" fill="#37322F" />
+                          <rect x="8" y="2" width="1" height="1" fill="#37322F" />
+                          <rect x="9.5" y="2" width="1" height="1" fill="#37322F" />
+                          <rect x="8" y="3.5" width="1" height="1" fill="#37322F" />
+                          <rect x="9.5" y="3.5" width="1" height="1" fill="#37322F" />
+                          <rect x="8" y="5" width="1" height="1" fill="#37322F" />
+                          <rect x="9.5" y="5" width="1" height="1" fill="#37322F" />
+                        </svg>
+                      }
+                      text="Social Proof"
+                    />
+                    <div className="w-full max-w-[472.55px] text-center flex justify-center flex-col text-[#49423D] text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold leading-tight md:leading-[60px] font-sans tracking-tight">
+                      Confidence backed by results
+                    </div>
+                    <div className="self-stretch text-center text-[#605A57] text-sm sm:text-base font-normal leading-6 sm:leading-7 font-sans">
+                      Our customers achieve more each day
+                      <br className="hidden sm:block" />
+                      because their tools are simple, powerful, and clear.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logo Grid */}
+                <div className="self-stretch border-[rgba(55,50,47,0.12)] flex justify-center items-start border-t border-b-0">
+                  <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                    {/* Left decorative pattern */}
+                    <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                      {Array.from({ length: 50 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-0 border-l border-r border-[rgba(55,50,47,0.12)]">
+                    {/* Logo Grid - Responsive grid */}
+                    {Array.from({ length: 8 }).map((_, index) => {
+                      const isMobileFirstColumn = index % 2 === 0
+                      const isMobileLastColumn = index % 2 === 1
+                      const isDesktopFirstColumn = index % 4 === 0
+                      const isDesktopLastColumn = index % 4 === 3
+                      const isMobileBottomRow = index >= 6
+                      const isDesktopTopRow = index < 4
+                      const isDesktopBottomRow = index >= 4
+
+                      return (
+                        <div
+                          key={index}
+                          className={`
+                            h-24 xs:h-28 sm:h-32 md:h-36 lg:h-40 flex justify-center items-center gap-1 xs:gap-2 sm:gap-3
+                            border-b border-[rgba(227,226,225,0.5)]
+                            ${index < 6 ? "sm:border-b-[0.5px]" : "sm:border-b"}
+                            ${index >= 6 ? "border-b" : ""}
+                            ${isMobileFirstColumn ? "border-r-[0.5px]" : ""}
+                            sm:border-r-[0.5px] sm:border-l-0
+                            ${isDesktopFirstColumn ? "md:border-l" : "md:border-l-[0.5px]"}
+                            ${isDesktopLastColumn ? "md:border-r" : "md:border-r-[0.5px]"}
+                            ${isDesktopTopRow ? "md:border-b-[0.5px]" : ""}
+                            ${isDesktopBottomRow ? "md:border-t-[0.5px] md:border-b" : ""}
+                            border-[#E3E2E1]
+                          `}
+                        >
+                          <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 relative shadow-[0px_-4px_8px_rgba(255,255,255,0.64)_inset] overflow-hidden rounded-full">
+                            <img src="/horizon-icon.svg" alt="Horizon" className="w-full h-full object-contain" />
+                          </div>
+                          <div className="text-center flex justify-center flex-col text-[#37322F] text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl font-medium leading-tight md:leading-9 font-sans">
+                            Acute
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                    {/* Right decorative pattern */}
+                    <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                      {Array.from({ length: 50 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bento Grid Section */}
+              <div className="w-full border-b border-[rgba(55,50,47,0.12)] flex flex-col justify-center items-center">
+                {/* Header Section */}
+                <div className="self-stretch px-4 sm:px-6 md:px-8 lg:px-0 lg:max-w-[1060px] lg:w-[1060px] py-8 sm:py-12 md:py-16 border-b border-[rgba(55,50,47,0.12)] flex justify-center items-center gap-6">
+                  <div className="w-full max-w-[616px] lg:w-[616px] px-4 sm:px-6 py-4 sm:py-5 shadow-[0px_2px_4px_rgba(50,45,43,0.06)] overflow-hidden rounded-lg flex flex-col justify-start items-center gap-3 sm:gap-4 shadow-none">
+                    <Badge
+                      icon={
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="1" y="1" width="4" height="4" stroke="#37322F" strokeWidth="1" fill="none" />
+                          <rect x="7" y="1" width="4" height="4" stroke="#37322F" strokeWidth="1" fill="none" />
+                          <rect x="1" y="7" width="4" height="4" stroke="#37322F" strokeWidth="1" fill="none" />
+                          <rect x="7" y="7" width="4" height="4" stroke="#37322F" strokeWidth="1" fill="none" />
+                        </svg>
+                      }
+                      text="Bento grid"
+                    />
+                    <div className="w-full max-w-[598.06px] lg:w-[598.06px] text-center flex justify-center flex-col text-[#49423D] text-xl sm:text-2xl md:text-3xl lg:text-5xl font-semibold leading-tight md:leading-[60px] font-sans tracking-tight">
+                      Built for absolute clarity and focused work
+                    </div>
+                    <div className="self-stretch text-center text-[#605A57] text-sm sm:text-base font-normal leading-6 sm:leading-7 font-sans">
+                      Stay focused with tools that organize, connect
+                      <br />
+                      and turn information into confident decisions.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bento Grid Content */}
+                <div className="self-stretch flex justify-center items-start">
+                  <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                    {/* Left decorative pattern */}
+                    <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                      {Array.from({ length: 200 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-r border-[rgba(55,50,47,0.12)]">
+                    {/* Top Left - Smart. Simple. Brilliant. */}
+                    <div className="border-b border-r-0 md:border-r border-[rgba(55,50,47,0.12)] p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-start items-start gap-4 sm:gap-6">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-[#37322F] text-lg sm:text-xl font-semibold leading-tight font-sans">
+                          Smart. Simple. Brilliant.
+                        </h3>
+                        <p className="text-[#605A57] text-sm md:text-base font-normal leading-relaxed font-sans">
+                          Your data is beautifully organized so you see everything clearly without the clutter.
+                        </p>
+                      </div>
+                      <div className="w-full h-[200px] sm:h-[250px] md:h-[300px] rounded-lg flex items-center justify-center overflow-hidden">
+                        <SmartSimpleBrilliant
+                          width="100%"
+                          height="100%"
+                          theme="light"
+                          className="scale-50 sm:scale-65 md:scale-75 lg:scale-90"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Top Right - Your work, in sync */}
+                    <div className="border-b border-[rgba(55,50,47,0.12)] p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-start items-start gap-4 sm:gap-6">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-[#37322F] font-semibold leading-tight font-sans text-lg sm:text-xl">
+                          Your work, in sync
+                        </h3>
+                        <p className="text-[#605A57] text-sm md:text-base font-normal leading-relaxed font-sans">
+                          Every update flows instantly across your team and keeps collaboration effortless and fast.
+                        </p>
+                      </div>
+                      <div className="w-full h-[200px] sm:h-[250px] md:h-[300px] rounded-lg flex overflow-hidden text-right items-center justify-center">
+                        <YourWorkInSync
+                          width="400"
+                          height="250"
+                          theme="light"
+                          className="scale-60 sm:scale-75 md:scale-90"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Bottom Left - Effortless integration */}
+                    <div className="border-r-0 md:border-r border-[rgba(55,50,47,0.12)] p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-start items-start gap-4 sm:gap-6 bg-transparent">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-[#37322F] text-lg sm:text-xl font-semibold leading-tight font-sans">
+                          Effortless integration
+                        </h3>
+                        <p className="text-[#605A57] text-sm md:text-base font-normal leading-relaxed font-sans">
+                          All your favorite tools connect in one place and work together seamlessly by design.
+                        </p>
+                      </div>
+                      <div className="w-full h-[200px] sm:h-[250px] md:h-[300px] rounded-lg flex overflow-hidden justify-center items-center relative bg-transparent">
+                        <div className="w-full h-full flex items-center justify-center bg-transparent">
+                          <EffortlessIntegration width={400} height={250} className="max-w-full max-h-full" />
+                        </div>
+                        {/* Gradient mask for soft bottom edge */}
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#F7F5F3] to-transparent pointer-events-none"></div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Right - Numbers that speak */}
+                    <div className="p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-start items-start gap-4 sm:gap-6">
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-[#37322F] text-lg sm:text-xl font-semibold leading-tight font-sans">
+                          Numbers that speak
+                        </h3>
+                        <p className="text-[#605A57] text-sm md:text-base font-normal leading-relaxed font-sans">
+                          Track growth with precision and turn raw data into confident decisions you can trust.
+                        </p>
+                      </div>
+                      <div className="w-full h-[200px] sm:h-[250px] md:h-[300px] rounded-lg flex overflow-hidden items-center justify-center relative">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <NumbersThatSpeak
+                            width="100%"
+                            height="100%"
+                            theme="light"
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        {/* Gradient mask for soft bottom edge */}
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#F7F5F3] to-transparent pointer-events-none"></div>
+                        {/* Fallback content if component doesn't render */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-20 hidden">
+                          <div className="flex flex-col items-center gap-2 p-4">
+                            <div className="w-3/4 h-full bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="text-sm text-green-600">Growth Rate</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="w-4 sm:w-6 md:w-8 lg:w-12 self-stretch relative overflow-hidden">
+                    {/* Right decorative pattern */}
+                    <div className="w-[120px] sm:w-[140px] md:w-[162px] left-[-40px] sm:left-[-50px] md:left-[-58px] top-[-120px] absolute flex flex-col justify-start items-start">
+                      {Array.from({ length: 200 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="self-stretch h-3 sm:h-4 rotate-[-45deg] origin-top-left outline outline-[0.5px] outline-[rgba(3,7,18,0.08)] outline-offset-[-0.25px]"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documentation Section */}
+              <DocumentationSection />
+
+              {/* Testimonials Section */}
+              <TestimonialsSection />
+
+              {/* Pricing Section */}
+              <PricingSection />
+
+              {/* FAQ Section */}
+              <FAQSection />
+
+              {/* CTA Section */}
+              <CTASection />
+
+              {/* Footer Section */}
+              <FooterSection />
             </div>
-            <p className="text-xs text-text-muted leading-relaxed max-w-xs">End-to-end ESG management platform for modern organizations, turning data into action.</p>
-          </div>
-          {[
-            { title: 'Product', links: ['Overview', 'Environmental', 'Social', 'Governance', 'Gamification'] },
-            { title: 'Company', links: ['About', 'Careers', 'Blog', 'Press'] },
-            { title: 'Legal', links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'] },
-          ].map((col, i) => (
-            <motion.div
-              key={col.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-4">{col.title}</p>
-              <ul className="flex flex-col gap-3">
-                {col.links.map(link => (
-                  <li key={link}><a href="#" className="text-sm text-text-muted hover:text-text-primary transition-colors">{link}</a></li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
-        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs font-mono text-text-muted">© 2025 EcoSphere. All rights reserved.</p>
-          <div className="flex gap-4">
-            {['Twitter', 'LinkedIn', 'GitHub'].map(s => (
-              <a key={s} href="#" className="text-xs font-mono text-text-muted hover:text-text-primary">{s}</a>
-            ))}
           </div>
         </div>
-      </footer>
+      </div>
     </div>
-  );
+  )
+}
+
+// FeatureCard component definition inline to fix import error
+function FeatureCard({
+  title,
+  description,
+  isActive,
+  progress,
+  onClick,
+}: {
+  title: string
+  description: string
+  isActive: boolean
+  progress: number
+  onClick: () => void
+}) {
+  return (
+    <div
+      className={`w-full md:flex-1 self-stretch px-6 py-5 overflow-hidden flex flex-col justify-start items-start gap-2 cursor-pointer relative border-b md:border-b-0 last:border-b-0 ${isActive
+        ? "bg-white shadow-[0px_0px_0px_0.75px_#E0DEDB_inset]"
+        : "border-l-0 border-r-0 md:border border-[#E0DEDB]/80"
+        }`}
+      onClick={onClick}
+    >
+      {isActive && (
+        <div className="absolute top-0 left-0 w-full h-0.5 bg-[rgba(50,45,43,0.08)]">
+          <div
+            className="h-full bg-[#322D2B] transition-all duration-100 ease-linear"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+
+      <div className="self-stretch flex justify-center flex-col text-[#49423D] text-sm md:text-sm font-semibold leading-6 md:leading-6 font-sans">
+        {title}
+      </div>
+      <div className="self-stretch text-[#605A57] text-[13px] md:text-[13px] font-normal leading-[22px] md:leading-[22px] font-sans">
+        {description}
+      </div>
+    </div>
+  )
 }

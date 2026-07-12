@@ -1,15 +1,14 @@
 generator client {
   provider = "prisma-client-js"
-  engineType = "library"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Department {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String
   code      String   @unique
   head      String?
@@ -27,9 +26,10 @@ model Department {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
   email         String?   @unique
+   image     String
   password      String?
   avatarUrl     String?
   role          String    @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN" | "MANAGER"
@@ -114,7 +114,7 @@ model TrainingCompletion {
   training      Training @relation(fields: [trainingId], references: [id])
 
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation("UserParticipations", fields: [userId], references: [id])
 }
 
 model Badge {
