@@ -3,7 +3,7 @@ import Badge from '@/app/_components/ui/Badge';
 import StatCard from '@/app/_components/ui/StatCard';
 import { getCsrActivities, createCsrActivity } from '@/app/_actions/social';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import JoinActivityForm from './JoinActivityForm';
 
 export default async function CsrActivitiesPage() {

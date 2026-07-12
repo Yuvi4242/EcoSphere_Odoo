@@ -2,7 +2,7 @@
 
 import { prisma } from '@/app/_lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import { revalidatePath } from 'next/cache';
 
 // Fetch all CSR activities
@@ -264,7 +264,7 @@ export async function getTrainingMatrix() {
 
   const matrix = trainings.map((t: any) => {
     const deptProgress: Record<string, number> = {};
-    
+
     for (const dept of departments) {
       // count how many completions in this training were by users in this dept
       const completionsInDept = t.completions.filter((c: any) => c.user.departmentId === dept.id).length;

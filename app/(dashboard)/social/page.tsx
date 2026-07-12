@@ -3,7 +3,7 @@ import PageHeader from '@/app/_components/ui/PageHeader';
 import Badge from '@/app/_components/ui/Badge';
 import { getSocialStats, getPendingParticipations, getCsrActivities, createCsrActivity } from '@/app/_actions/social';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/authOptions';
 import ApprovalQueueClient from './ApprovalQueueClient';
 import JoinActivityForm from './csr-activities/JoinActivityForm';
 
@@ -70,8 +70,8 @@ export default async function SocialPage() {
                       <Badge
                         variant={
                           a.status === 'COMPLETED' ? 'completed'
-                          : a.status === 'UPCOMING' ? 'upcoming'
-                          : 'pending'
+                            : a.status === 'UPCOMING' ? 'upcoming'
+                              : 'pending'
                         }
                         label={a.status}
                       />
@@ -79,7 +79,7 @@ export default async function SocialPage() {
                         <JoinActivityForm activityId={a.id} />
                       )}
                       {!isAdmin && hasJoined && (
-                         <span className="text-[10px] font-mono text-env">✓ JOINED</span>
+                        <span className="text-[10px] font-mono text-env">✓ JOINED</span>
                       )}
                     </div>
                   </div>
